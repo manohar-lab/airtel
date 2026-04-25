@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#e0e5ec] text-gray-800 font-sans antialiased selection:bg-airtel-red selection:text-white;
+  }
+}
+
+@layer components {
+  /* Standard Neuromorphic Card */
+  .neo-card {
+    @apply bg-[#e0e5ec] rounded-2xl;
+    box-shadow: 9px 9px 16px rgba(163, 177, 198, 0.6), 
+               -9px -9px 16px rgba(255, 255, 255, 0.5);
+  }
+  
+  /* Hover elevated Neuromorphic Card */
+  .neo-card-hover {
+    @apply transition-all duration-300 ease-in-out cursor-pointer;
+  }
+  .neo-card-hover:hover {
+    box-shadow: 12px 12px 20px rgba(163, 177, 198, 0.7), 
+               -12px -12px 20px rgba(255, 255, 255, 0.6);
+    transform: translateY(-2px);
+  }
+
+  /* Inset Neuromorphic Element (for inputs) */
+  .neo-inset {
+    @apply bg-[#e0e5ec] rounded-xl outline-none focus:ring-2 focus:ring-airtel-red/50 transition-all;
+    box-shadow: inset 6px 6px 10px 0 rgba(163, 177, 198, 0.7),
+                inset -6px -6px 10px 0 rgba(255, 255, 255, 0.8);
+  }
+
+  /* Neuromorphic Button - Red Theme */
+  .neo-btn-red {
+    @apply bg-airtel-red text-white font-semibold rounded-xl transition-all duration-300 active:scale-95;
+    box-shadow: 6px 6px 12px rgba(168, 17, 23, 0.4), 
+               -6px -6px 12px rgba(255, 44, 53, 0.2);
+  }
+  .neo-btn-red:hover {
+    @apply bg-airtel-light;
+  }
+
+  /* Active/Pressed State */
+  .neo-active {
+    box-shadow: inset 4px 4px 8px rgba(163, 177, 198, 0.7), inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+  }
+}
