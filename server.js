@@ -14,7 +14,10 @@ const PORT = process.env.PORT || 5000;
 // Initialize Gemini Client (optional — falls back to rule-based if key missing)
 let ai = null;
 if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here') {
-  ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  ai = new GoogleGenAI({ 
+    apiKey: process.env.GEMINI_API_KEY,
+    apiVersion: 'v1' // Explicitly use v1 to avoid v1beta model availability issues
+  });
 }
 
 
@@ -221,10 +224,10 @@ Return ONLY the raw JSON object, no markdown, no explanation.
 
       const response = await ai.models.generateContent({
         model: 'gemini-1.5-flash',
-        contents: prompt,
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
       });
 
-      const textOutput = response.text;
+      const textOutput = response.text || '';
       const jsonStr = textOutput.replace(/```json\n?|\n?```|```/g, '').trim();
 
       try {
@@ -320,16 +323,17 @@ User Query: "${query}"
 
     const response = await ai.models.generateContent({
       model: 'gemini-1.5-flash',
-      contents: prompt,
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
     });
 
-    const textOutput = response.text;
+    const textOutput = response.text || '';
     const jsonStr = textOutput.replace(/```json\n?|\n?```|```/g, '').trim();
 
     let extractedAttributes = {};
     try {
       extractedAttributes = JSON.parse(jsonStr);
     } catch {
+      console.warn("🤖 [Orchestrator] Gemini JSON parse failed.");
       return res.status(500).json({ error: "Agent could not parse extracted attributes." });
     }
 
@@ -345,6 +349,19 @@ User Query: "${query}"
     console.error("🤖 [Orchestrator] Error:", error);
     return res.status(500).json({ error: "Internal server error." });
   }
+});
+
+
+// ==========================================
+// 4. GLOBAL ERROR HANDLER
+// ==========================================
+app.use((err, req, res, next) => {
+  console.error("❌ [Server Error]:", err.stack);
+  res.status(500).json({
+    success: false,
+    error: "Internal Server Error",
+    message: err.message
+  });
 });
 
 
